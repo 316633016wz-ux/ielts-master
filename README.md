@@ -18,6 +18,16 @@ npm run start
 3. 分享 → 添加到主屏幕
 4. 在"设置"页配置 Supabase 同步
 
+## 推荐部署设置
+
+Netlify:
+- Build command：留空
+- Publish directory：`frontend`
+
+Cloudflare Pages:
+- Build command：留空
+- Output directory：`frontend`
+
 ## 文档导航
 
 | 文档 | 说明 |

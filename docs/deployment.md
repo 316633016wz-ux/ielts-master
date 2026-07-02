@@ -19,6 +19,8 @@ npm run start
 
 部署后得到 HTTPS 地址，iPhone Safari 可直接访问并添加到主屏幕。
 
+项目根目录已包含 `netlify.toml`，Netlify 会自动读取发布目录和基础安全响应头。
+
 ## Cloudflare Pages 部署（长期省钱备选）
 
 1. 将代码推送到 GitHub
