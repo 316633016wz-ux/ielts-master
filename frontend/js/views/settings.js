@@ -19,7 +19,7 @@ export const renderSettings = {
           </div>
           <div class="plan-form-row">
             <label class="label" for="supabaseKey">Supabase anon key</label>
-            <input class="input" id="supabaseKey" name="supabaseKey" value="${escapeHTML(state.sync.supabaseKey)}" placeholder="eyJ...">
+            <input class="input" id="supabaseKey" name="supabaseKey" value="${escapeHTML(state.sync.supabaseKey)}" placeholder="sb_publishable_...">
           </div>
           <div class="plan-form-row">
             <label class="label" for="syncPassphrase">同步口令</label>
@@ -31,7 +31,7 @@ export const renderSettings = {
             <button class="btn btn-secondary" id="pullCloud" type="button">从云端拉取</button>
           </div>
           <div class="sync-status" id="syncStatus">
-            上次推送：${state.sync.lastPush || "无"} · 上次拉取：${state.sync.lastPull || "无"}
+            上次推送：${state.sync.lastPush || "无"} · 上次拉取：${state.sync.lastPull || "无"}。URL 推荐填写 Project URL，若误填 Data API URL 会自动兼容。
           </div>
         </form>
       </section>

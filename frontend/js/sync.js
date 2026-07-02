@@ -36,13 +36,24 @@ export async function pullStateFromCloud(state) {
 }
 
 function readConfig(state) {
-  const url = state.sync.supabaseUrl?.replace(/\/$/, "");
+  const url = normalizeSupabaseUrl(state.sync.supabaseUrl);
   const key = state.sync.supabaseKey;
   const passphrase = state.sync.syncPassphrase;
   if (!url || !key || !passphrase) {
     throw new Error("请先填写 Supabase URL、anon key 和同步口令。");
   }
   return { url, key, passphrase };
+}
+
+function normalizeSupabaseUrl(input) {
+  if (!input) return "";
+  try {
+    const parsed = new URL(input.trim());
+    if (parsed.pathname.includes("/rest/v1")) return parsed.origin;
+    return `${parsed.origin}${parsed.pathname.replace(/\/$/, "") === "" ? "" : parsed.pathname.replace(/\/$/, "")}`;
+  } catch {
+    return input.trim().replace(/\/rest\/v1\/?$/, "").replace(/\/$/, "");
+  }
 }
 
 function supabaseHeaders(key, extra = {}) {
