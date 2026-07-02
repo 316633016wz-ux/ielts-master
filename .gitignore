@@ -18,6 +18,7 @@ yarn-error.log*
 
 .netlify/
 .vercel/
+deploy/
 
 # Large local source used only to regenerate extracted vocabulary data.
 data/vocab-sources/ecdict.csv
