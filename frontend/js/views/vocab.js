@@ -1,7 +1,7 @@
 import { getState, updateState } from "../state.js";
 import { today } from "../utils/date.js";
 import { escapeHTML, formNumber } from "../utils/html.js";
-import { createVocabRecord, isDue, reviewVocab } from "../utils/sm2.js";
+import { createVocabRecord, getLearningStage, getLearningStageLabel, isDue, reviewVocab, reviewVocabChoice } from "../utils/sm2.js";
 import { getThemes, VOCAB_DATABASE } from "../utils/vocab-data.js";
 
 const FEEDBACK_KEY = "ielts-master-vocab-feedback";
@@ -145,14 +145,41 @@ export const renderVocab = {
         context.refresh();
       });
     });
+
+    container.querySelectorAll("[data-choice]").forEach(button => {
+      button.addEventListener("click", () => {
+        const state = getState();
+        const word = VOCAB_DATABASE.find(item => item.id === button.dataset.wordId);
+        if (!word) return;
+        const stage = Number(button.dataset.stage);
+        const isCorrect = button.dataset.correct === "true";
+        const updated = reviewVocabChoice(word, state.vocab[word.id], stage, isCorrect);
+        updateState({ vocab: { [word.id]: updated } });
+        sessionStorage.setItem(FEEDBACK_KEY, JSON.stringify({
+          word,
+          record: updated,
+          label: isCorrect ? (updated.status === "mastered" ? "已掌握" : "回答正确") : "选择错误",
+          stage,
+          isCorrect,
+          correctMeaning: word.meaning,
+        }));
+        context.refresh();
+      });
+    });
   },
 };
 
 function renderCard(word, state) {
   const record = state.vocab[word.id] || createVocabRecord(word);
+  const stage = getLearningStage(record);
+
+  if (stage === 2) return renderMeaningChoice(word, state, record);
+  if (stage === 3) return renderContextChoice(word, state, record);
+
   const isWeak = record.status === "weak" || (record.weakCount || 0) > 0;
   return `
     <section class="section">
+      <div class="vocab-stage-pill">${escapeHTML(getLearningStageLabel(1))}</div>
       <div class="vocab-card-wrapper" data-flip-card>
         <div class="vocab-card-inner">
           <div class="vocab-face vocab-face-front">
@@ -186,15 +213,64 @@ function renderCard(word, state) {
   `;
 }
 
+function renderMeaningChoice(word, state, record) {
+  const options = createMeaningOptions(word, state, "meaning");
+  return `
+    <section class="section">
+      <div class="card vocab-quiz-card">
+        <div class="vocab-stage-pill">${escapeHTML(getLearningStageLabel(2))}</div>
+        <div class="vocab-word">${escapeHTML(word.word)}</div>
+        ${word.phonetic ? `<div class="vocab-phonetic">${escapeHTML(word.phonetic)}</div>` : ""}
+        <p class="view-subtitle">从 4 个选项里选出正确释义。选错会停留在第二关，下次继续练。</p>
+        <div class="vocab-choice-grid">
+          ${options.map(option => renderChoiceButton(word, option, 2)).join("")}
+        </div>
+        <div class="vocab-meta">
+          <span>未掌握次数：${record.weakCount || 0}</span>
+          <span>本关错误会重复第二关</span>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderContextChoice(word, state, record) {
+  const options = createMeaningOptions(word, state, "context");
+  return `
+    <section class="section">
+      <div class="card vocab-quiz-card">
+        <div class="vocab-stage-pill">${escapeHTML(getLearningStageLabel(3))}</div>
+        <div class="vocab-context-sentence">${renderContextSentence(word)}</div>
+        <p class="view-subtitle">根据例句语境，选择 <strong>${escapeHTML(word.word)}</strong> 的正确意思。选错会停留在第三关。</p>
+        <div class="vocab-choice-grid">
+          ${options.map(option => renderChoiceButton(word, option, 3)).join("")}
+        </div>
+        <div class="vocab-meta">
+          <span>未掌握次数：${record.weakCount || 0}</span>
+          <span>答对本关后进入已掌握</span>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderChoiceButton(word, option, stage) {
+  return `
+    <button class="vocab-choice-btn" data-choice data-word-id="${word.id}" data-stage="${stage}" data-correct="${option.correct}" type="button">
+      ${escapeHTML(option.meaning)}
+    </button>
+  `;
+}
+
 function getNextCard(state) {
   const words = getEnabledWords(state);
-  const weakDueWord = words.find(word => isWeakRecord(state.vocab[word.id]) && isDue(state.vocab[word.id]));
+  const weakDueWord = words.find(word => isActiveRecord(state.vocab[word.id]) && isWeakRecord(state.vocab[word.id]) && isDue(state.vocab[word.id]));
   if (weakDueWord) return weakDueWord;
 
-  const dueWord = words.find(word => isDue(state.vocab[word.id]));
+  const dueWord = words.find(word => isActiveRecord(state.vocab[word.id]) && isDue(state.vocab[word.id]));
   if (dueWord) return dueWord;
 
-  const weakWord = words.find(word => isWeakRecord(state.vocab[word.id]));
+  const weakWord = words.find(word => isActiveRecord(state.vocab[word.id]) && isWeakRecord(state.vocab[word.id]));
   if (weakWord) return weakWord;
 
   const todayNewCount = Object.values(state.vocab).filter(record => record.firstSeen === today()).length;
@@ -213,7 +289,7 @@ function getStats(state) {
   const learned = records.length;
   const mastered = records.filter(record => record.status === "mastered").length;
   const weak = records.filter(isWeakRecord).length;
-  const due = records.filter(isDue).length;
+  const due = records.filter(record => isActiveRecord(record) && isDue(record)).length;
   const reviewedToday = records.filter(record => record.lastReview === today()).length;
   const newToday = records.filter(record => record.firstSeen === today()).length;
   return {
@@ -229,6 +305,10 @@ function getStats(state) {
 
 function isWeakRecord(record) {
   return Boolean(record && (record.status === "weak" || (record.weakCount || 0) > 0));
+}
+
+function isActiveRecord(record) {
+  return Boolean(record && record.status !== "mastered");
 }
 
 function getWeakWords(state) {
@@ -267,19 +347,20 @@ function renderWordPanel(title, words, subtitle, badgeClass) {
 function renderFeedback(feedback) {
   const word = feedback.word;
   const record = feedback.record;
+  const isCorrect = feedback.isCorrect === true;
   return `
     <section class="section">
-      <div class="card vocab-feedback">
-        <span class="badge badge-red">已加入未掌握 · ${escapeHTML(feedback.label)}</span>
+      <div class="card vocab-feedback ${isCorrect ? "vocab-feedback-correct" : ""}">
+        <span class="badge ${isCorrect ? "badge-green" : "badge-red"}">${escapeHTML(feedback.label)}</span>
         <h3 class="vocab-feedback-word">${escapeHTML(word.word)}</h3>
         ${word.phonetic ? `<div class="vocab-phonetic">${escapeHTML(word.phonetic)}</div>` : ""}
         <div class="vocab-meaning">${escapeHTML(word.meaning)}</div>
         ${word.englishMeaning ? `<div class="vocab-english">${escapeHTML(word.englishMeaning)}</div>` : ""}
         <div class="vocab-example">${escapeHTML(word.example)}</div>
-        <p class="view-subtitle">这个词会优先反复出现。连续答对后，未掌握次数会下降；达到掌握标准后进入已掌握。</p>
+        <p class="view-subtitle">${escapeHTML(getFeedbackText(feedback, record))}</p>
         <div class="vocab-meta">
           <span>未掌握次数：${record.weakCount || 0}</span>
-          <span>下次复习：${escapeHTML(record.nextReview)}</span>
+          <span>当前阶段：${escapeHTML(getLearningStageLabel(getLearningStage(record)))}</span>
         </div>
         <div class="view-actions">
           <button class="btn btn-primary" data-dismiss-feedback type="button">继续练习</button>
@@ -295,4 +376,78 @@ function getFeedback() {
   } catch {
     return null;
   }
+}
+
+function createMeaningOptions(word, state, kind) {
+  const allWords = getEnabledWords(state);
+  const sameTheme = allWords.filter(item => item.theme === word.theme && item.id !== word.id);
+  const fallback = allWords.filter(item => item.id !== word.id);
+  const candidates = [...sameTheme, ...fallback]
+    .filter(item => item.meaning && item.meaning !== word.meaning)
+    .sort((a, b) => seededOrder(`${word.id}-${kind}`, a.id) - seededOrder(`${word.id}-${kind}`, b.id));
+
+  const uniqueDistractors = [];
+  const seen = new Set([normalizeMeaning(word.meaning)]);
+  for (const item of candidates) {
+    const key = normalizeMeaning(item.meaning);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    uniqueDistractors.push({ meaning: item.meaning, correct: false });
+    if (uniqueDistractors.length === 3) break;
+  }
+
+  return [{ meaning: word.meaning, correct: true }, ...uniqueDistractors]
+    .sort((a, b) => seededOrder(`${word.id}-${kind}-option`, a.meaning) - seededOrder(`${word.id}-${kind}-option`, b.meaning));
+}
+
+function renderContextSentence(word) {
+  const example = word.example || "";
+  if (example && !example.startsWith("Try to use")) {
+    return escapeHTML(example);
+  }
+  return `In IELTS reading and writing, the word <strong>${escapeHTML(word.word)}</strong> often appears when discussing ${escapeHTML(themeLabel(word.theme))} topics.`;
+}
+
+function getFeedbackText(feedback, record) {
+  if (feedback.isCorrect && record.status === "mastered") {
+    return "这关答对了，单词已进入已掌握。之后仍会按间隔复习出现。";
+  }
+  if (feedback.isCorrect) {
+    return "这关答对了，进入下一关。下一次会用不同题型继续确认你是否真的掌握。";
+  }
+  if (feedback.stage === 2) {
+    return "第二关选错了。这个词会停留在释义选择题，下一次继续重复第二关。";
+  }
+  if (feedback.stage === 3) {
+    return "第三关选错了。这个词会停留在例句语境选择题，下一次继续重复第三关。";
+  }
+  return "这个词会优先反复出现。连续答对后，未掌握次数会下降；通过三关后进入已掌握。";
+}
+
+function themeLabel(theme) {
+  const labels = {
+    education: "education",
+    environment: "environment",
+    technology: "technology",
+    society: "society",
+    health: "health",
+    economy: "economy",
+    government: "government",
+    "urban-life": "urban life",
+    writing: "academic writing",
+  };
+  return labels[theme] || "academic";
+}
+
+function normalizeMeaning(meaning) {
+  return String(meaning).replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function seededOrder(seed, value) {
+  const text = `${seed}:${value}`;
+  let hash = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    hash = ((hash << 5) - hash + text.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
 }
