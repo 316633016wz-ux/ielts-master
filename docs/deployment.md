@@ -21,6 +21,12 @@ npm run start
 
 项目根目录已包含 `netlify.toml`，Netlify 会自动读取发布目录和基础安全响应头。
 
+当前 Netlify 线上地址：
+
+```text
+https://lucky-bonbon-e9e5b8.netlify.app
+```
+
 ## Cloudflare Pages 部署（长期省钱备选）
 
 1. 将代码推送到 GitHub

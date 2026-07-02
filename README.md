@@ -11,6 +11,10 @@ npm run start
 
 打开浏览器访问 `http://localhost:5173`
 
+## 线上地址
+
+[https://lucky-bonbon-e9e5b8.netlify.app](https://lucky-bonbon-e9e5b8.netlify.app)
+
 ## iPhone 使用
 
 1. 将代码推送到 GitHub，部署到 Netlify（免费）
