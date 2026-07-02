@@ -1,15 +1,18 @@
-// 雅思核心词汇数据库（第一批扩展词库）
-// 例句为项目自写示例；后续可继续从公开词表和自整理高频词扩展。
+// 雅思核心词汇数据库
+// 精选词条优先提供中文释义；完整 IELTS-4000 词库作为补充。
 
-export const VOCAB_VERSION = "2026-07-02-a";
+import { IELTS_4000_DATABASE, IELTS_4000_SOURCE, IELTS_4000_VERSION } from "./ielts-4000-data.js";
+
+export const VOCAB_VERSION = `2026-07-02-b+${IELTS_4000_VERSION}`;
 
 export const VOCAB_SOURCES = [
+  IELTS_4000_SOURCE,
   "Academic Word List",
   "IELTS 官方与 British Council/IDP 公开备考主题",
   "项目自整理雅思高频写作与阅读词",
 ];
 
-export const VOCAB_DATABASE = [
+export const CURATED_VOCAB_DATABASE = [
   // Education & research
   word("academic", "academic", "/ˌækəˈdemɪk/", "adj. 学术的；理论的", "He has an academic background in physics.", "education"),
   word("analyze", "analyze", "/ˈænəlaɪz/", "v. 分析", "We need to analyze the data carefully.", "education"),
@@ -151,6 +154,8 @@ export const VOCAB_DATABASE = [
   word("whereas", "whereas", "/ˌweərˈæz/", "conj. 然而；鉴于", "Cars are convenient, whereas public transport is cheaper.", "writing"),
 ];
 
+export const VOCAB_DATABASE = mergeVocab(CURATED_VOCAB_DATABASE, IELTS_4000_DATABASE);
+
 /** 获取词汇主题列表 */
 export function getThemes() {
   const themes = new Set(VOCAB_DATABASE.map(v => v.theme));
@@ -169,5 +174,23 @@ export function getVocabById(id) {
 }
 
 function word(id, wordText, phonetic, meaning, example, theme) {
-  return { id, word: wordText, phonetic, meaning, example, theme };
+  return { id, word: wordText, phonetic, meaning, example, theme, source: "curated" };
+}
+
+function mergeVocab(curated, imported) {
+  const byWord = new Map();
+
+  for (const item of imported) {
+    byWord.set(item.word.toLowerCase(), item);
+  }
+
+  for (const item of curated) {
+    byWord.set(item.word.toLowerCase(), {
+      ...byWord.get(item.word.toLowerCase()),
+      ...item,
+      source: item.source || "curated",
+    });
+  }
+
+  return Array.from(byWord.values()).sort((a, b) => a.word.localeCompare(b.word));
 }

@@ -15,6 +15,18 @@ npm run start
 
 [https://lucky-bonbon-e9e5b8.netlify.app](https://lucky-bonbon-e9e5b8.netlify.app)
 
+## 当前词库
+
+- 精选中文词条：122
+- 完整 IELTS 导入词条：4323
+- 合并后总词条：4354
+
+词汇学习规则：
+
+- 先翻卡片看释义和例句
+- 再选择“不认识 / 模糊 / 认识 / 熟练”
+- 点“不认识”或“模糊”的词会自动进入薄弱词队列，后续优先反复复习
+
 ## iPhone 使用
 
 1. 将代码推送到 GitHub，部署到 Netlify（免费）

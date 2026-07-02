@@ -102,10 +102,14 @@ vocab: {
     repetitions: 0,              // 累计成功复习次数
     nextReview: "2026-07-02",    // 下次复习日期
     lastReview: null,            // 上次复习日期
-    status: "new",               // "new" | "learning" | "review" | "mastered"
+    lastQuality: null,            // 最近一次熟悉度评分
+    weakCount: 0,                 // 薄弱次数，越高越优先复习
+    status: "new",               // "new" | "weak" | "learning" | "review" | "mastered"
   }
 }
 ```
+
+用户点击“不认识”或“模糊”时，`status` 会变为 `weak`，`weakCount` 增加。词汇页会优先安排薄弱词复习。
 
 ### SM-2 算法说明
 ```

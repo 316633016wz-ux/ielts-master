@@ -16,10 +16,25 @@
 | IDP IELTS Practice tests | 免费练习题与备考内容 | https://ielts.idp.com/prepare/ielts-practice-tests |
 | Cambridge English IELTS preparation | 剑桥官方备考入口 | https://www.cambridgeenglish.org/exams-and-tests/ielts/preparation/ |
 | Academic Word List | 学术高频词来源参考 | https://www.wgtn.ac.nz/lals/resources/academicwordlist |
+| IELTS-4000 Academic Word List | 完整词库导入来源，MIT License | https://github.com/NeuralPensieve/Vocabulary-Knowledge-Thompson-Sampling |
 
 ## 词库扩展策略
 
-第一批词库位于 `frontend/js/utils/vocab-data.js`，目前按主题分组：
+词库位于：
+
+```text
+frontend/js/utils/vocab-data.js
+frontend/js/utils/ielts-4000-data.js
+data/vocab-sources/IELTS-4000.txt
+```
+
+当前策略：
+
+- `IELTS-4000.txt` 作为完整雅思词库来源。
+- `vocab-data.js` 中的精选词条优先提供中文释义、音标和自写例句。
+- 导入词条提供英文释义，并在后续逐步补中文释义。
+
+目前按主题分组：
 
 - education
 - environment
@@ -38,6 +53,15 @@
 3. 阅读同义替换词。
 4. 听力场景词：图书馆、住宿、旅游、课程、租房、交通。
 5. 用户错题中反复出现的生词。
+
+## 薄弱词复习策略
+
+词汇卡片必须先翻开查看释义和例句，才能选择熟悉度。
+
+- 点“不认识”或“模糊”：单词进入薄弱词队列。
+- 薄弱词会优先出现在每日复习中。
+- 反复点“认识/熟练”后，薄弱计数会逐步下降。
+- 已掌握词仍按 SM-2 间隔复习，不会频繁打扰。
 
 ## 阅读资料策略
 

@@ -12,6 +12,8 @@ export function createVocabRecord(word) {
     repetitions: 0,
     nextReview: today(),
     lastReview: null,
+    lastQuality: null,
+    weakCount: 0,
     status: "new",
   };
 }
@@ -46,6 +48,8 @@ export function reviewVocab(word, currentRecord, quality) {
     interval,
     repetitions,
     lastReview: today(),
+    lastQuality: quality,
+    weakCount: quality < 3 ? (record.weakCount || 0) + 1 : Math.max(0, (record.weakCount || 0) - 1),
     nextReview: addDays(today(), interval),
     status: getStatus(repetitions, interval, quality),
   };
@@ -56,7 +60,7 @@ export function isDue(record) {
 }
 
 function getStatus(repetitions, interval, quality) {
-  if (quality < 3) return "learning";
+  if (quality < 3) return "weak";
   if (repetitions >= 4 && interval >= 21) return "mastered";
   if (repetitions >= 2) return "review";
   return "learning";

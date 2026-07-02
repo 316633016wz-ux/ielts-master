@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.mjs",
     "check": "node --check frontend/js/app.js && node --check frontend/js/state.js && node --check frontend/js/sync.js",
-    "log:today": "node scripts/dev-log.mjs"
+    "log:today": "node scripts/dev-log.mjs",
+    "vocab:import": "node scripts/import-ielts4000.mjs"
   }
 }
