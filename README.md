@@ -13,7 +13,7 @@ npm run start
 
 ## 线上地址
 
-[https://lucky-bonbon-e9e5b8.netlify.app](https://lucky-bonbon-e9e5b8.netlify.app)
+[https://wzielts-master.netlify.app](https://wzielts-master.netlify.app)
 
 ## 当前词库
 

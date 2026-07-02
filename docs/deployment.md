@@ -24,7 +24,7 @@ npm run start
 当前 Netlify 线上地址：
 
 ```text
-https://lucky-bonbon-e9e5b8.netlify.app
+https://wzielts-master.netlify.app
 ```
 
 ## Cloudflare Pages 部署（长期省钱备选）
