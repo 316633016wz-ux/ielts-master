@@ -1,0 +1,11 @@
+{
+  "name": "ielts-master",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check frontend/js/app.js && node --check frontend/js/state.js && node --check frontend/js/sync.js",
+    "log:today": "node scripts/dev-log.mjs"
+  }
+}
