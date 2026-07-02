@@ -38,6 +38,7 @@ export const DEFAULT_STATE = {
   mistakes: [],        // 错题本
   expressions: [],     // 表达本
   mocks: [],           // 模考记录
+  quizAttempts: [],    // 阅读/听力刷题记录
   completions: {},     // { "YYYY-MM-DD": { taskId: true } }
 
   sync: {
@@ -61,6 +62,7 @@ export function initState() {
       if (state.version !== DEFAULT_STATE.version) {
         state = migrateState(state);
       }
+      state = deepMerge(cloneDefaultState(), state);
     } catch (err) {
       console.error("Failed to parse state:", err);
       state = cloneDefaultState();
@@ -120,7 +122,7 @@ function migrateState(oldState) {
   if (!oldState.version) {
     return { ...DEFAULT_STATE, ...oldState, version: 1 };
   }
-  return oldState;
+  return deepMerge(cloneDefaultState(), oldState);
 }
 
 function cloneDefaultState() {

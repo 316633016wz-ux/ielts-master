@@ -1,8 +1,9 @@
-const CACHE = "ielts-master-v3";
+const CACHE = "ielts-master-v4";
 const ASSETS = ["/", "/index.html", "/styles/main.css", "/styles/components.css",
   "/styles/views.css", "/js/app.js", "/js/state.js", "/js/sync.js",
   "/js/utils/date.js", "/js/utils/score.js", "/js/utils/vocab-data.js",
   "/js/utils/plan.js", "/js/utils/sm2.js", "/js/utils/html.js",
+  "/js/utils/question-bank-data.js",
   "/js/views/dashboard.js", "/js/views/plan.js", "/js/views/vocab.js",
   "/js/views/practice.js", "/js/views/notebook.js", "/js/views/mock.js",
   "/js/views/settings.js",

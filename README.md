@@ -39,6 +39,8 @@ Cloudflare Pages:
 | [开发总引导](CLAUDE.md) | AI 开发必读，含进度和规范 |
 | [功能需求](docs/requirements.md) | 模块需求和验收标准 |
 | [技术方案](docs/technical-plan.md) | 技术栈选择、模块划分、推进步骤 |
+| [学习资料来源](docs/learning-resources.md) | 官方资源、版权边界、资料入库原则 |
+| [题库设计](docs/question-bank-design.md) | 阅读/听力题库结构、题型、判分规则 |
 | [UI 设计规范](docs/design-system.md) | 颜色、字体、组件规范 |
 | [数据结构](docs/data-model.md) | 所有 state 字段说明 |
 | [开发工作流](docs/dev-workflow.md) | 提交规范和检查清单 |

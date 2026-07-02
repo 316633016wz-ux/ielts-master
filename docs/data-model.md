@@ -23,6 +23,7 @@ const DEFAULT_STATE = {
   mistakes: [],                  // 错题本
   expressions: [],               // 表达本
   mocks: [],                     // 模考记录
+  quizAttempts: [],              // 阅读/听力刷题记录
   completions: {},               // 今日任务完成情况 { "YYYY-MM-DD": { taskId: true } }
   sync: { ... },                 // 同步配置
 };
@@ -189,6 +190,43 @@ mocks: [
     notes: "阅读时间不够用",
   }
 ]
+```
+
+---
+
+## quizAttempts（刷题记录）
+
+```javascript
+quizAttempts: [
+  {
+    id: "uuid",
+    date: "2026-07-02",
+    setId: "reading-urban-gardens-001",
+    skill: "reading",            // "reading" | "listening"
+    title: "Urban Gardens and Community Health",
+    total: 4,
+    correct: 3,
+    answers: {
+      "r-urban-001-q1": "True"
+    },
+    mistakes: [
+      {
+        questionId: "r-urban-001-q2",
+        questionType: "true-false-not-given",
+        userAnswer: "Not Given",
+        correctAnswer: "False",
+        explanation: "Paragraph 2 says some land may be temporary."
+      }
+    ],
+    createdAt: "2026-07-02T14:30:00.000Z",
+  }
+]
+```
+
+题库静态数据位于：
+
+```text
+frontend/js/utils/question-bank-data.js
 ```
 
 ---

@@ -42,3 +42,10 @@
 - 开发结束更新 `CLAUDE.md` 和当天 `dev-logs/YYYY-MM-DD.md`。
 - 新功能先本地验证，再考虑部署。
 - 学习资料来源必须可追踪；涉及版权的真题资料不直接内置盗版内容。
+
+## 当前第二阶段进展
+
+- 第一批词库已扩展到多个雅思常见主题。
+- 学习资料来源与版权边界已记录在 `docs/learning-resources.md`。
+- 阅读/听力题库结构已记录在 `docs/question-bank-design.md`。
+- 原创阅读和听力样例数据已放入 `frontend/js/utils/question-bank-data.js`。
