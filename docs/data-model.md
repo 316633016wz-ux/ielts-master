@@ -92,6 +92,7 @@ vocab: {
     // 从词汇表继承的静态数据
     word: "advocate",
     meaning: "v. 提倡，支持；n. 倡导者",
+    englishMeaning: "support or recommend publicly",
     example: "She advocates for equal rights.",
     phonetic: "/ˈædvəkeɪt/",
     theme: "social",
@@ -100,6 +101,7 @@ vocab: {
     easeFactor: 2.5,             // 难度因子（1.3 ~ 5.0），越低越难
     interval: 0,                 // 当前复习间隔（天），0=新词
     repetitions: 0,              // 累计成功复习次数
+    firstSeen: "2026-07-02",     // 首次学习日期，用于控制每日新词轮次
     nextReview: "2026-07-02",    // 下次复习日期
     lastReview: null,            // 上次复习日期
     lastQuality: null,            // 最近一次熟悉度评分
@@ -109,7 +111,7 @@ vocab: {
 }
 ```
 
-用户点击“不认识”或“模糊”时，`status` 会变为 `weak`，`weakCount` 增加。词汇页会优先安排薄弱词复习。
+用户点击“不认识”或“模糊”时，`status` 会变为 `weak`，`weakCount` 增加。词汇页会立刻显示中文释义、英文释义和例句，并优先安排薄弱词复习。多次答对后 `weakCount` 逐步下降，成功复习 4 次后进入 `mastered`。
 
 ### SM-2 算法说明
 ```

@@ -17,6 +17,7 @@
 | Cambridge English IELTS preparation | 剑桥官方备考入口 | https://www.cambridgeenglish.org/exams-and-tests/ielts/preparation/ |
 | Academic Word List | 学术高频词来源参考 | https://www.wgtn.ac.nz/lals/resources/academicwordlist |
 | IELTS-4000 Academic Word List | 完整词库导入来源，MIT License | https://github.com/NeuralPensieve/Vocabulary-Knowledge-Thompson-Sampling |
+| ECDICT | 英汉释义与音标补充，MIT License | https://github.com/skywind3000/ECDICT |
 
 ## 词库扩展策略
 
@@ -31,8 +32,9 @@ data/vocab-sources/IELTS-4000.txt
 当前策略：
 
 - `IELTS-4000.txt` 作为完整雅思词库来源。
+- ECDICT 用于为 IELTS-4000 词条补充中文释义和音标。
 - `vocab-data.js` 中的精选词条优先提供中文释义、音标和自写例句。
-- 导入词条提供英文释义，并在后续逐步补中文释义。
+- 导入词条提供中文释义、音标和英文释义；例句后续逐步优化。
 
 目前按主题分组：
 
@@ -59,6 +61,7 @@ data/vocab-sources/IELTS-4000.txt
 词汇卡片必须先翻开查看释义和例句，才能选择熟悉度。
 
 - 点“不认识”或“模糊”：单词进入薄弱词队列。
+- 系统会立刻显示中文释义、英文释义和例句，帮助当场记忆。
 - 薄弱词会优先出现在每日复习中。
 - 反复点“认识/熟练”后，薄弱计数会逐步下降。
 - 已掌握词仍按 SM-2 间隔复习，不会频繁打扰。
